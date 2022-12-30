@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <!-- Font Awesome -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- MDB -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.1/mdb.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <style></style>
+  <body>
+    <div class="container" id="app">
+      <div class="text-center my-4">
+        <h4>My Caculator</h4>
+      </div>
+      <div class="row my-5 justify-content-center">
+        <div class="col-12">
+          <div class="card" style="background-color: #222930fb">
+            <div class="card-body">
+              <div
+                class="border p-3 mb-3 text-white d-flex justify-content-end align-items-center bg-dark"
+              >
+                {{answer}}
+              </div>
+              <div class="row">
+                <div class="form-group col-6 mb-3">
+                  <input
+                    type="number"
+                    class="form-control"
+                    v-model="userInput.firstNumber"
+                    placeholder="first number"
+                  />
+                  <span class="text-danger" v-show="validation.firNum">
+                    First Number is required!
+                  </span>
+                </div>
+                <div class="form-group col-6 mb-3">
+                  <input
+                    type="number"
+                    class="form-control"
+                    v-model="userInput.secondNumber"
+                    placeholder="second-number"
+                  />
+                  <span class="text-danger"  v-show="validation.secNum">
+                    Second Number is required!
+                  </span>
+                </div>
+
+                <div class="d-flex justify-content-around row">
+                  <div class="col-4">
+                    <select
+                      v-model="userInput.operator"
+                      name=""
+                      id="exampleFormControlSelect1"
+                      class="form-control"
+                    >
+                      <option value="">Choose Option..</option>
+                      <option value="+">+</option>
+                      <option value="-">-</option>
+                      <option value="*">*</option>
+                      <option value="/">/</option>
+                    </select>
+                    <span class="text-danger"  v-show="validation.operator">
+                        Operator is required!
+                      </span>
+                  </div>
+
+                  <div class="col-4 text-center">
+                    <button @click="calculate()" class="btn btn-primary">
+                      Cal
+                    </button>
+                  </div>
+                  <div class="col-4">
+                    <button @click="clearAllForm()" class="btn btn-danger">Clear</button>
+                  </div>
+                </div>
+                <div class="d-flex justify-content-center">
+                  <div class="btn btn-warning mt-2 w-100" @click="save()">Save</div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer">
+              <h5 class="text-white">History</h5>
+              <div class="text-muted" v-for="history in histories">{{history}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.7.13/dist/vue.js"></script>
+  <script>
+    let app = new Vue({
+      el: "#app",
+      data: {
+        answer: 0,
+        userInput: {
+          firstNumber: "",
+          secondNumber: "",
+          operator: "",
+        },
+        validation:{
+            firNum:false,
+            secNum:false,
+            operator:false,
+        },
+        histories:[]
+      },
+      methods: {
+        calculate() {
+            this.validationCheck();
+            if(!this.validation.firNum && !this.validation.secNum && !this.validation.operator){
+                let result = this.operation();
+                this.answer =`${this.userInput.firstNumber} ${this.userInput.operator} ${this.userInput.secondNumber} = ${result}`;
+                this.clearForm();
+            }
+          
+        },
+        clearForm(){
+            this.userInput.firstNumber='',
+            this.userInput.secondNumber='',
+            this.userInput.operator='';
+        },
+        clearAllForm(){
+            this.clearForm();
+            this.answer=0;
+            this.validation.firNum=false;
+            this.validation.secNum=false;
+            this.validation.operator=false;
+        },
+        save(){
+            if (this.answer!=0){
+                this.histories.push(this.answer);
+                this.answer=0;
+            }
+            return;
+        },
+        validationCheck(){
+            this.validation.firNum=this.userInput.firstNumber==''?true:false;
+            this.validation.secNum=this.userInput.secondNumber==''?true:false;
+            this.validation.operator=this.userInput.operator==''?true:false;
+        },
+        operation() {
+          let firNum = Number(this.userInput.firstNumber);
+          let secNum = Number(this.userInput.secondNumber);
+          switch (this.userInput.operator) {
+            case "+":
+              return firNum + secNum;
+              break;
+            case "-":
+              return firNum - secNum;
+              break;
+            case "multiply":
+              return firNum * secNum;
+              break;
+            case "/":
+              return firNum / secNum;
+              break;
+            default:
+              return "error";
+              break;
+          }
+        },
+      },
+    });
+  </script>
+</html>
